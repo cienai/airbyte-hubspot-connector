@@ -19,6 +19,7 @@ from source_hubspot.streams import (
     API,
     Campaigns,
     Companies,
+    Leads,
     CompaniesPropertyHistory,
     CompaniesWebAnalytics,
     ContactLists,
@@ -136,6 +137,7 @@ class SourceHubspot(AbstractSource):
         streams = [
             Campaigns(**common_params),
             Companies(**common_params),
+            Leads(**common_params),
             ContactLists(**common_params),
             Contacts(**common_params),
             ContactsFormSubmissions(**common_params),

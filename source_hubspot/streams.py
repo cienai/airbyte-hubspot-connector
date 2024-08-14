@@ -2155,6 +2155,10 @@ class Companies(CRMSearchStream):
     primary_key = "id"
     scopes = {"crm.objects.contacts.read", "crm.objects.companies.read"}
 
+class Leads(CRMSearchStream):
+    entity = "lead"
+    primary_key = "id"
+    scopes = {"crm.objects.leads.read"}
 
 class Contacts(CRMSearchStream):
     entity = "contact"
