@@ -21,7 +21,7 @@
       "type": ["null", "boolean"]
     },
     "deals": {
-      "description": "Deals associated with the ticket",
+      "description": "Deals associated with the line item",
       "type": ["null", "array"],
       "items": {
         "description": "Deal data",
