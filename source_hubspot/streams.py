@@ -2228,7 +2228,7 @@ class Goals(CRMObjectIncrementalStream):
     scopes = {"crm.objects.goals.read"}
 
 
-class LineItems(CRMObjectIncrementalStream):
+class LineItems(CRMSearchStream):
     entity = "line_item"
     primary_key = "id"
     associations = ["deals"]
