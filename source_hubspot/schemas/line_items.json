@@ -19,6 +19,14 @@
     "archived": {
       "description": "Indicates whether the line item is archived or not.",
       "type": ["null", "boolean"]
+    },
+    "deals": {
+      "description": "Deals associated with the ticket",
+      "type": ["null", "array"],
+      "items": {
+        "description": "Deal data",
+        "type": ["null", "string"]
+      }
     }
   }
 }
