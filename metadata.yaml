@@ -13,15 +13,15 @@ data:
   dockerImageTag: 4.3.0
   dockerRepository: cienai/airbyte-hubspot-connector
   documentationUrl: https://docs.airbyte.com/integrations/sources/hubspot
-  githubIssueLabel: source-hubspot
+  githubIssueLabel: cien-source-hubspot
   icon: hubspot.svg
   license: ELv2
   maxSecondsBetweenMessages: 86400
-  name: HubSpot 2
+  name: Cien HubSpot
   remoteRegistries:
     pypi:
       enabled: true
-      packageName: airbyte-source-hubspot
+      packageName: cien-source-hubspot
   registryOverrides:
     cloud:
       enabled: true

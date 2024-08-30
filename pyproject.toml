@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 version = "4.2.14"
-name = "source-hubspot"
+name = "cien-source-hubspot"
 description = "Source implementation for HubSpot."
 authors = [ "Airbyte <contact@airbyte.io>",]
 license = "ELv2"
