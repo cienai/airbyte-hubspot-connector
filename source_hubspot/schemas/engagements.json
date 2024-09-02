@@ -159,6 +159,13 @@
           "items": {
             "type": ["null", "integer"]
           }
+        },
+        "partnerClientIds": {
+          "description": "IDs of owners associated with the engagement.",
+          "type": ["null", "array"],
+          "items": {
+            "type": ["null", "integer"]
+          }
         }
       }
     },
@@ -220,6 +227,13 @@
     },
     "associations_ticketIds": {
       "description": "List of ticket IDs associated with the engagement",
+      "type": ["null", "array"],
+      "items": {
+        "type": ["null", "integer"]
+      }
+    },
+    "associations_partnerClientIds": {
+      "description": "List of marketing event IDs associated with the engagement",
       "type": ["null", "array"],
       "items": {
         "type": ["null", "integer"]
