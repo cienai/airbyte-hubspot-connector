@@ -1092,7 +1092,7 @@ class CRMSearchStream(IncrementalStream, ABC):
     state_pk = "updatedAt"
     updated_at_field = "updatedAt"
     last_modified_field: str = None
-    associations: List[str] = None
+    associations: List[str] = []
     fully_qualified_name: str = None
 
     # added to guarantee the data types, declared for the stream's schema
@@ -1187,7 +1187,8 @@ class CRMSearchStream(IncrementalStream, ABC):
                     stream_state=stream_state,
                     stream_slice=stream_slice,
                 )
-                records = self._read_associations(records)
+                if self.associations:
+                    records = self._read_associations(records)
             else:
                 records, raw_response = self._read_stream_records(
                     stream_slice=stream_slice,
@@ -1523,6 +1524,15 @@ class DealPipelines(ClientSideIncrementalStream):
     cursor_field_datetime_format = "x"
     primary_key = "pipelineId"
     scopes = {"crm.objects.contacts.read"}
+
+
+class DealSplits(CRMSearchStream):
+    """Deal splits, API v3"""
+
+    entity = "deal_split"
+    last_modified_field = "hs_lastmodifieddate"
+    primary_key = "id"
+    scopes = {"crm.objects.deals.read"}
 
 
 class TicketPipelines(ClientSideIncrementalStream):
@@ -2176,7 +2186,7 @@ class Contacts(CRMSearchStream):
 class EngagementsCalls(CRMSearchStream):
     entity = "calls"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deal", "company", "tickets"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2184,7 +2194,7 @@ class EngagementsCalls(CRMSearchStream):
 class EngagementsEmails(CRMSearchStream):
     entity = "emails"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deal", "company", "tickets"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read", "sales-email-read"}
 
@@ -2192,7 +2202,7 @@ class EngagementsEmails(CRMSearchStream):
 class EngagementsMeetings(CRMSearchStream):
     entity = "meetings"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deal", "company", "tickets"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2200,7 +2210,7 @@ class EngagementsMeetings(CRMSearchStream):
 class EngagementsNotes(CRMSearchStream):
     entity = "notes"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deal", "company", "tickets"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2208,7 +2218,7 @@ class EngagementsNotes(CRMSearchStream):
 class EngagementsTasks(CRMSearchStream):
     entity = "tasks"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deal", "company", "tickets"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2232,7 +2242,7 @@ class LineItems(CRMObjectIncrementalStream):
     entity = "line_item"
     primary_key = "id"
     associations = ["deals"]
-    scopes = {"e-commerce", "crm.objects.deals.read"}
+    scopes = {"e-commerce"}
 
 
 class Products(CRMObjectIncrementalStream):
@@ -2251,7 +2261,6 @@ class Tickets(CRMSearchStream):
 
 class CustomObject(CRMSearchStream, ABC):
     last_modified_field = "hs_lastmodifieddate"
-    associations = []
     primary_key = "id"
     scopes = {"crm.schemas.custom.read", "crm.objects.custom.read"}
 
