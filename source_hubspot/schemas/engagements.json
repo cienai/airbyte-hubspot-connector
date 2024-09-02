@@ -166,7 +166,21 @@
           "items": {
             "type": ["null", "integer"]
           }
+        },
+        "orderIds": {
+          "description": "IDs of owners associated with the engagement.",
+          "type": ["null", "array"],
+          "items": {
+            "type": ["null", "integer"]
+          }
         }
+      }
+    },
+    "associations_orderIds": {
+      "description": "List of contact IDs associated with the engagement",
+      "type": ["null", "array"],
+      "items": {
+        "type": ["null", "integer"]
       }
     },
     "associations_contactIds": {
