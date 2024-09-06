@@ -27,6 +27,13 @@
         "description": "Details of a company associated with the contact.",
         "type": ["null", "string"]
       }
+    },
+    "contacts": {
+      "description": "Information about contacts associated with the deal",
+      "type": ["null", "array"],
+      "items": {
+        "type": ["null", "string"]
+      }
     }
   }
 }
