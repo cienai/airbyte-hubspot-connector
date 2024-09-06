@@ -246,6 +246,13 @@
         "type": ["null", "integer"]
       }
     },
+    "metadata_webconferencemeetingid": {
+      "description": "List of marketing event IDs associated with the engagement",
+      "type": ["null", "array"],
+      "items": {
+        "type": ["null", "integer"]
+      }
+    },
     "attachments": {
       "description": "Attachments included in the engagement.",
       "type": ["null", "array"],
