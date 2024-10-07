@@ -2228,6 +2228,7 @@ class Goals(CRMObjectIncrementalStream):
 class LineItems(CRMObjectIncrementalStream):
     entity = "line_item"
     primary_key = "id"
+    associations = ["deals"]
     scopes = {"e-commerce"}
 
 
