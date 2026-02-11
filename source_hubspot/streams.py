@@ -1064,7 +1064,8 @@ class CRMSearchStream(IncrementalStream, ABC):
     limit = 100  # This value is used only when state is None.
     state_pk = "updatedAt"
     updated_at_field = "updatedAt"
-    last_modified_field: str = None
+    # Most HubSpot CRM objects expose hs_lastmodifieddate for incremental search filters.
+    last_modified_field: str = "hs_lastmodifieddate"
     associations: List[str] = []
     fully_qualified_name: str = None
 
@@ -1103,7 +1104,7 @@ class CRMSearchStream(IncrementalStream, ABC):
     ) -> Tuple[List, requests.Response]:
         stream_records = {}
         properties_list = list(self.properties.keys())
-        if last_id == None:
+        if last_id is None:
             last_id = 0
         # The search query below uses the following criteria:
         #   - Last modified >= timestemp of previous sync
@@ -1243,11 +1244,17 @@ class CRMSearchStream(IncrementalStream, ABC):
     def set_sync(self, sync_mode: SyncMode, stream_state):
         self._sync_mode = sync_mode
         if self._sync_mode == SyncMode.incremental:
+            state_dt = self._start_date
             if stream_state:
-                if not self._state:
-                    self._state = self._start_date
-                else:
-                    self._state = self._start_date = max(self._state, self._start_date)
+                # stream_state is keyed by cursor field, e.g. {"updatedAt": "2026-02-10T00:00:00.000Z"}
+                raw_state = stream_state.get(self.cursor_field)
+                if raw_state not in (None, ""):
+                    try:
+                        state_dt = max(self._field_to_datetime(raw_state), self._start_date)
+                    except Exception:
+                        # Fall back to configured start_date if state is malformed.
+                        state_dt = self._start_date
+            self._state = state_dt
 
 
 class CRMObjectStream(Stream):
@@ -2152,13 +2159,19 @@ class Companies(CRMSearchStream):
 
 class Leads(CRMSearchStream):
     entity = "lead"
+    # Use the canonical v3 object type id for search/read endpoints.
+    fully_qualified_name = "leads"
     primary_key = "id"
+    last_modified_field = "hs_lastmodifieddate"
     scopes = {"crm.objects.leads.read"}
 
 
 class Users(CRMSearchStream):
     entity = "user"
+    # Use the canonical v3 object type id for search/read endpoints.
+    fully_qualified_name = "users"
     primary_key = "id"
+    last_modified_field = "hs_lastmodifieddate"
     scopes = {"crm.objects.users.read"}
 
 
