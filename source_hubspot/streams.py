@@ -178,9 +178,6 @@ class API:
 
     BASE_URL = "https://api.hubapi.com"
     USER_AGENT = "Airbyte"
-    # Bound both connection setup and response reads so a stalled HubSpot
-    # request cannot leave an entire sync process running indefinitely.
-    REQUEST_TIMEOUT = (10, 120)
     logger = logger
 
     def is_oauth2(self) -> bool:
@@ -255,11 +252,11 @@ class API:
     @retry_connection_handler(max_tries=5, factor=5)
     @retry_after_handler(max_tries=3)
     def get(self, url: str, params: MutableMapping[str, Any] = None) -> Tuple[Union[MutableMapping[str, Any], List[MutableMapping[str, Any]]], requests.Response]:
-        response = self._session.get(self.BASE_URL + url, params=params, timeout=self.REQUEST_TIMEOUT)
+        response = self._session.get(self.BASE_URL + url, params=params)
         return self._parse_and_handle_errors(response), response
 
     def post(self, url: str, data: Mapping[str, Any], params: MutableMapping[str, Any] = None) -> Tuple[Union[Mapping[str, Any], List[Mapping[str, Any]]], requests.Response]:
-        response = self._session.post(self.BASE_URL + url, params=params, json=data, timeout=self.REQUEST_TIMEOUT)
+        response = self._session.post(self.BASE_URL + url, params=params, json=data)
         return self._parse_and_handle_errors(response), response
 
     def get_custom_objects_metadata(self) -> Iterable[Tuple[str, str, Mapping[str, Any]]]:
@@ -2189,7 +2186,7 @@ class Contacts(CRMSearchStream):
 class EngagementsCalls(CRMSearchStream):
     entity = "calls"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deals", "companies"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2197,7 +2194,7 @@ class EngagementsCalls(CRMSearchStream):
 class EngagementsEmails(CRMSearchStream):
     entity = "emails"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deals", "companies"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read", "sales-email-read"}
 
@@ -2205,7 +2202,7 @@ class EngagementsEmails(CRMSearchStream):
 class EngagementsMeetings(CRMSearchStream):
     entity = "meetings"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deals", "companies"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2213,7 +2210,7 @@ class EngagementsMeetings(CRMSearchStream):
 class EngagementsNotes(CRMSearchStream):
     entity = "notes"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deals", "companies"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
@@ -2221,7 +2218,7 @@ class EngagementsNotes(CRMSearchStream):
 class EngagementsTasks(CRMSearchStream):
     entity = "tasks"
     last_modified_field = "hs_lastmodifieddate"
-    associations = ["contacts", "deals", "companies"]
+    associations = ["contacts", "deals", "companies", "tickets"]
     primary_key = "id"
     scopes = {"crm.objects.contacts.read"}
 
