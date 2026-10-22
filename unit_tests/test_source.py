@@ -15,7 +15,20 @@ from airbyte_cdk.models import ConfiguredAirbyteCatalog, SyncMode, Type
 from source_hubspot.errors import HubspotRateLimited, InvalidStartDateConfigError
 from source_hubspot.helpers import APIv3Property
 from source_hubspot.source import SourceHubspot
-from source_hubspot.streams import API, Companies, Deals, Engagements, MarketingEmails, Products, Stream
+from source_hubspot.streams import (
+    API,
+    Companies,
+    Deals,
+    Engagements,
+    EngagementsCalls,
+    EngagementsEmails,
+    EngagementsMeetings,
+    EngagementsNotes,
+    EngagementsTasks,
+    MarketingEmails,
+    Products,
+    Stream,
+)
 
 from .utils import read_full_refresh, read_incremental
 
@@ -61,6 +74,35 @@ def test_check_connection_exception(config):
 
     assert not ok
     assert error_msg
+
+
+def test_api_requests_use_bounded_timeout(config, mocker):
+    api = API(config["credentials"])
+    response = mocker.Mock(status_code=200, headers={}, json=lambda: {})
+    api._session.get = mocker.Mock(return_value=response)
+    api._session.post = mocker.Mock(return_value=response)
+
+    api.get("/test", params={"page": 1})
+    api.post("/test", data={"value": 1}, params={"page": 1})
+
+    api._session.get.assert_called_once_with(
+        f"{api.BASE_URL}/test",
+        params={"page": 1},
+        timeout=API.REQUEST_TIMEOUT,
+    )
+    api._session.post.assert_called_once_with(
+        f"{api.BASE_URL}/test",
+        params={"page": 1},
+        json={"value": 1},
+        timeout=API.REQUEST_TIMEOUT,
+    )
+
+
+def test_activity_streams_request_only_cien_activity_associations():
+    expected = {"contacts", "deals", "companies"}
+    streams = [EngagementsCalls, EngagementsEmails, EngagementsMeetings, EngagementsNotes, EngagementsTasks]
+
+    assert all(set(stream.associations) == expected for stream in streams)
 
 
 def test_check_connection_bad_request_exception(requests_mock, config_invalid_client_id):
